@@ -9,13 +9,14 @@ const bcrypt = require('bcrypt');
 
 async function createUser(username, email, password) {
     try {
-        const userDetails = {user_name, email, password}
-        const user = await User.create(userDetails)
-        return user
+        const emailCheck = await User.findOne({
+            where: { email }
+        })
+        return emailCheck ? true : false
     } catch (error) {
         return error
     }
-}
+};
 
 async function checkEmail (email) {
     try {
@@ -24,8 +25,8 @@ async function checkEmail (email) {
         })
         return emailCheck ? true : false
     } catch (error) {
-        return error
-    }
+        throw new Error(`Error checking if user's email exists: ${error}`)
+    };
 };
 
 async function checkUsername(username) {
@@ -38,7 +39,7 @@ async function checkUsername(username) {
     catch (error) {
         return error
     }
-}
+};
 
 async function getUserById(id) {
     try {
@@ -58,29 +59,53 @@ async function getUserByEmail(email) {
             attributes: { exclude: ['password' ,'image_key']},
             where: { email }
           });
-
         return result
     } catch (error) {
         return error
     }
 };
 
-async function hashUserPassword(password) {
+async function retrieveHashedPassword(email) {
     try {
-        const saltRounds = 10;
-        const hash = await bcrypt.hash(password, saltRounds);   
-        return hash 
+        const buyerPassword = await User.findOne({
+            attributes: ["hashed_password"],
+            where: {email}
+        });
+        return JSON.parse(JSON.stringify(buyerPassword)).hashed_password;
     } catch (error) {
-        return error
-    }
-}
-
-const functions = {
-    checkEmail,
-    checkUsername,
-    getUserById,
-    getUserByEmail,
-    hashUserPassword
+        throw new Error(`Error retrieving user's password: ${error}`)
+    };
 };
 
-module.exports = functions
+
+async function confirmRetrievedPassword(password, hashedPassword) {
+    try {
+        const confirmPassword = await bcrypt.compare(password, hashedPassword)
+        return confirmPassword;
+    } catch (error) {
+        throw new Error(`Error comfirming user's password: ${error}`)
+    };
+};
+
+async function hashPassword (password) {
+    try {
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(password, saltRounds);
+        return hash
+    } catch (error) {
+        throw new Error(`Error hashing buyer's password: ${error}`);
+    };
+};
+
+const userFunctions = {
+    createUser,
+    checkEmail,
+    checkUsername,
+    getUserByEmail,
+    getUserById,
+    hashPassword,
+    retrieveHashedPassword,
+    confirmRetrievedPassword
+}
+
+module.exports = userFunctions;
