@@ -26,7 +26,7 @@ function verifyToken(req, res, next) {
     jwt.verify(token, secret, function(err, user) {
         if (err) return res.status(403).send({
             errno : 100,
-            message: "Token expired! please login again."
+            message: "Token expired, please login."
         })
         req.user = user
         next()

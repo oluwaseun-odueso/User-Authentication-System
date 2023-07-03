@@ -8,19 +8,18 @@ const {
     login,
     updateAccount,
     getAccount,
-    deleteAccount
 } = require('../controllers/userController')
 
 router.post(
-    '/signup', 
+    '/register', 
     body('email').isEmail(), 
     body('password')
     .isLength({min: 8})
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/), 
     signup);
 router.post('/login', body('email').isEmail(), login);
-router.get('/get_account', verifyToken, getAccount)
-router.put('/update_account', verifyToken, updateAccount);
-router.delete('/delete_account', verifyToken, deleteAccount);
+router.get('/profile', verifyToken, getAccount)
+router.put('/profile', verifyToken, updateAccount);
+router.post
 
 module.exports = router;

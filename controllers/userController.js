@@ -11,7 +11,6 @@ const {
    confirmRetrievedPassword,
    checkIfEntriesMatch,
    updateUserAccount,
-   deleteUserAccount
 } = require('../functions/userFunctions')
 
 
@@ -174,35 +173,11 @@ async function getAccount (req, res) {
    };
 };
 
-async function deleteAccount (req, res) {
-   try {
-       const deletedAccount = await deleteUserAccount(req.user.id)
-       if (deletedAccount === 1) { 
-           res.status(200).send({
-               success: true,
-               message: "Your account has been deleted!"
-           })
-           return
-       };
-       res.status(400).send({
-           success: false,
-           message: "You do not have an account, sign up to create an account"
-       });
-   } catch (error) {
-       return res.status(500).json({
-           success: false,
-           message: 'Could not delete your account',
-           error: error.message
-       });
-   };
-};
-
 const controllers = {
    signup, 
    login, 
    getAccount,
    updateAccount,
-   deleteAccount
 }
 
 module.exports = controllers;

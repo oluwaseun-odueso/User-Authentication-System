@@ -113,19 +113,6 @@ async function updateUserAccount(id, username, email) {
     };
 };
 
-
-async function deleteUserAccount(id) {
-    try {
-        const deletedAccount = await User.destroy({
-            where: {id}
-        })
-        return deletedAccount;
-    } catch (error) {
-        throw new Error(`Error deleting user's account: ${error}`)
-    };
-};
-
-
 const userFunctions = {
     createUser,
     checkEmail,
@@ -137,7 +124,6 @@ const userFunctions = {
     confirmRetrievedPassword,
     checkIfEntriesMatch,
     updateUserAccount,
-    deleteUserAccount
 }
 
 module.exports = userFunctions;
