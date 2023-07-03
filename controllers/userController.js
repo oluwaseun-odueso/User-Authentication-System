@@ -1,4 +1,4 @@
-const validationResult = require('express-validator')
+const {validationResult} = require('express-validator')
 const {generateToken} = require('../authentication/userAuth')
 const {
    createUser,
@@ -8,12 +8,13 @@ const {
    getUserByEmail,
    hashPassword,
    retrieveHashedPassword,
-   confirmRetrievedPassword
-   
+   confirmRetrievedPassword,
+   checkIfEntriesMatch,
+   updateAccountDetails
 } = require('../functions/userFunctions')
 
 
-export async function signUpBuyer (req, res) {
+async function signup (req, res) {
    const errors = validationResult(req)
    try {
       // Check if all required fields are provided
@@ -63,7 +64,7 @@ export async function signUpBuyer (req, res) {
   };
 };
 
-export async function loginBuyer (req, res) {
+async function login (req, res) {
    const errors = validationResult(req)
    try {
       if (!req.body.email || !req.body.password) {
@@ -109,3 +110,50 @@ export async function loginBuyer (req, res) {
        });
    };
 };
+
+async function updateAccount(req, res) {
+   try {
+      // Check if necessary fields are entered
+      if (!req.body.username || !req.body.email) {
+         res.status(400).json({ 
+            success: false, 
+            message: "Please enter all required fields"
+         });
+         return;
+      };
+
+      // Deconstruct username and email
+      const {username, email} = req.body;
+      const user = await getUserById(req.user.id)
+      if ( await checkEmail (email) && ! checkIfEntriesMatch(user.email, email)) {
+         res.status(400).send({
+            success: false,
+            message: "Email already exists"
+         });
+         return;
+      };
+
+      await updateAccountDetails(req.user.id, username, email)
+      const newDetails = await getUserById(req.user.id)
+      res.status(200).send({
+         success: true,
+         message: 'Your account has been updated!', 
+         newDetails
+      });
+
+   } catch (error) {
+       return res.status(500).json({
+           success: false,
+           message: `Error updating user's account`,
+           error: error.message
+       });
+   };
+};
+
+const controllers = {
+   signup, 
+   login, 
+   updateAccount
+}
+
+module.exports = controllers;

@@ -97,6 +97,22 @@ async function hashPassword (password) {
     };
 };
 
+
+function checkIfEntriesMatch(firstValue, secondValue) {
+    return firstValue === secondValue;
+};
+
+async function updateAccountDetails(id, username, email) {
+    try {
+        const updatedDetails = await Buyer.update({username, email}, {
+            where: { id }
+        });
+        return updatedDetails
+    } catch (error) {
+        throw new Error(`Error updating buyer's details: ${error}`)
+    };
+};
+
 const userFunctions = {
     createUser,
     checkEmail,
@@ -105,7 +121,9 @@ const userFunctions = {
     getUserById,
     hashPassword,
     retrieveHashedPassword,
-    confirmRetrievedPassword
+    confirmRetrievedPassword,
+    checkIfEntriesMatch,
+    updateAccountDetails
 }
 
 module.exports = userFunctions;
