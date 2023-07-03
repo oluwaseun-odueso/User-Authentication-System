@@ -1,0 +1,22 @@
+{
+  "name": "youseai-internship-assignment",
+  "version": "1.0.0",
+  "description": "user authentication system",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oluwaseun-odueso/User-Authentication-System.git"
+  },
+  "author": "Oluwaseun Odueso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oluwaseun-odueso/User-Authentication-System/issues"
+  },
+  "homepage": "https://github.com/oluwaseun-odueso/User-Authentication-System#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}
