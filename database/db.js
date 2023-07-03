@@ -6,7 +6,7 @@ const username = process.env.SQ_USERNAME;
 const password = process.env.SQ_PASSWORD;
 const host = process.env.SQ_HOST;
 
-if (!database || !user || !password) {
+if (!database || !username || !password) {
   throw new Error(
     "Missing required environment variables for database connection"
   );
@@ -22,4 +22,4 @@ sequelize
   .then(() => console.log("Connection has been established successfully."))
   .catch((error) => console.log("Unable to connect to the database:", error));
 
-export default sequelize;
+module.exports = sequelize;
