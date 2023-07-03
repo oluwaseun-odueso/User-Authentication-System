@@ -22,5 +22,3 @@ User.init({
     sequelize, // We need to pass the connection instance
     modelName: 'User' 
   });
-
-console.log(User === sequelize.models.User); // true

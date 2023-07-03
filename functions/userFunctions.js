@@ -1,10 +1,4 @@
-// const {DataTypes} = require('sequelize')
-// const userModel = require('../model/user')
-// const bcrypt = require('bcrypt');
-// const sequelize = require('../database/db');
-// const User = userModel(sequelize, DataTypes)
-
-const User = require('../models/user')
+const User = require('../model/user')
 const bcrypt = require('bcrypt');
 
 async function createUser(username, email, password) {

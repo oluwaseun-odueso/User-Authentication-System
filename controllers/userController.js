@@ -14,7 +14,7 @@ const {
 } = require('../functions/userFunctions')
 
 
-async function signup (req, res) {
+async function signup(req, res) {
    const errors = validationResult(req)
    try {
       // Check if all required fields are provided
@@ -64,7 +64,7 @@ async function signup (req, res) {
   };
 };
 
-async function login (req, res) {
+async function login(req, res) {
    const errors = validationResult(req)
    try {
       if (!req.body.email || !req.body.password) {
@@ -150,34 +150,47 @@ async function updateAccount(req, res) {
    };
 };
 
-async function getAccount (req, res) {
+async function getAccount(req, res) {
    try {
-       const user = await getUserById(req.buyer.id);
-       if (!user) {
-           res.status(400).send({
-               success: false,
-               message: "Oops! You do not have an account, sign up to continue."
-           });
-           return;
-       };
-       res.status(200).send({ 
-           success: true,
-           buyer
-       });
+         const user = await getUserById(req.buyer.id);
+         if (!user) {
+            res.status(400).send({
+                  success: false,
+                  message: "Oops! You do not have an account, sign up to continue."
+            });
+            return;
+         };
+         res.status(200).send({ 
+            success: true,
+            buyer
+         });
    } catch (error) {
-       return res.status(500).json({
-           success: false,
-           message: "Error getting user's account details",
-           error: error.message
-       });
+         return res.status(500).json({
+            success: false,
+            message: "Error getting user's account details",
+            error: error.message
+         });
    };
 };
+
+async function logout(req, res) {
+   try {
+      
+   } catch (error) {
+      return res.status(500).json({
+         success: false,
+         message: "Error getting user's account details",
+         error: error.message
+      });
+   }
+}
 
 const controllers = {
    signup, 
    login, 
    getAccount,
    updateAccount,
+   logout
 }
 
 module.exports = controllers;

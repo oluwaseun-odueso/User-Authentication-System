@@ -8,6 +8,7 @@ const {
     login,
     updateAccount,
     getAccount,
+    logout
 } = require('../controllers/userController')
 
 router.post(
@@ -20,6 +21,6 @@ router.post(
 router.post('/login', body('email').isEmail(), login);
 router.get('/profile', verifyToken, getAccount)
 router.put('/profile', verifyToken, updateAccount);
-router.post
+router.post('/logout', verifyToken, logout)
 
 module.exports = router;
