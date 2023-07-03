@@ -102,7 +102,7 @@ function checkIfEntriesMatch(firstValue, secondValue) {
     return firstValue === secondValue;
 };
 
-async function updateAccountDetails(id, username, email) {
+async function updateUserAccount(id, username, email) {
     try {
         const updatedDetails = await Buyer.update({username, email}, {
             where: { id }
@@ -112,6 +112,19 @@ async function updateAccountDetails(id, username, email) {
         throw new Error(`Error updating buyer's details: ${error}`)
     };
 };
+
+
+async function deleteUserAccount(id) {
+    try {
+        const deletedAccount = await User.destroy({
+            where: {id}
+        })
+        return deletedAccount;
+    } catch (error) {
+        throw new Error(`Error deleting user's account: ${error}`)
+    };
+};
+
 
 const userFunctions = {
     createUser,
@@ -123,7 +136,8 @@ const userFunctions = {
     retrieveHashedPassword,
     confirmRetrievedPassword,
     checkIfEntriesMatch,
-    updateAccountDetails
+    updateUserAccount,
+    deleteUserAccount
 }
 
 module.exports = userFunctions;

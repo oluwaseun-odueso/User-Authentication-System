@@ -10,7 +10,8 @@ const {
    retrieveHashedPassword,
    confirmRetrievedPassword,
    checkIfEntriesMatch,
-   updateAccountDetails
+   updateUserAccount,
+   deleteUserAccount
 } = require('../functions/userFunctions')
 
 
@@ -133,7 +134,7 @@ async function updateAccount(req, res) {
          return;
       };
 
-      await updateAccountDetails(req.user.id, username, email)
+      await updateUserAccount(req.user.id, username, email)
       const newDetails = await getUserById(req.user.id)
       res.status(200).send({
          success: true,
@@ -150,10 +151,58 @@ async function updateAccount(req, res) {
    };
 };
 
+async function getAccount (req, res) {
+   try {
+       const user = await getUserById(req.buyer.id);
+       if (!user) {
+           res.status(400).send({
+               success: false,
+               message: "Oops! You do not have an account, sign up to continue."
+           });
+           return;
+       };
+       res.status(200).send({ 
+           success: true,
+           buyer
+       });
+   } catch (error) {
+       return res.status(500).json({
+           success: false,
+           message: "Error getting user's account details",
+           error: error.message
+       });
+   };
+};
+
+async function deleteAccount (req, res) {
+   try {
+       const deletedAccount = await deleteUserAccount(req.user.id)
+       if (deletedAccount === 1) { 
+           res.status(200).send({
+               success: true,
+               message: "Your account has been deleted!"
+           })
+           return
+       };
+       res.status(400).send({
+           success: false,
+           message: "You do not have an account, sign up to create an account"
+       });
+   } catch (error) {
+       return res.status(500).json({
+           success: false,
+           message: 'Could not delete your account',
+           error: error.message
+       });
+   };
+};
+
 const controllers = {
    signup, 
    login, 
-   updateAccount
+   getAccount,
+   updateAccount,
+   deleteAccount
 }
 
 module.exports = controllers;

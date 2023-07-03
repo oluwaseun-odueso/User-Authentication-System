@@ -6,7 +6,9 @@ const {verifyToken} = require('../authentication/userAuth')
 const {
     signup,
     login,
-    updateAccount
+    updateAccount,
+    getAccount,
+    deleteAccount
 } = require('../controllers/userController')
 
 router.post(
