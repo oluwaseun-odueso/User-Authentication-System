@@ -103,7 +103,7 @@ async function updateUserAccount(id, username, email) {
         });
         return updatedDetails
     } catch (error) {
-        throw new Error(`Error updating buyer's details: ${error}`)
+        throw new Error(`Error updating user's details: ${error}`)
     };
 };
 
