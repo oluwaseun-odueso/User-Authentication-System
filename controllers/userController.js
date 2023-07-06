@@ -19,7 +19,7 @@ async function signup(req, res) {
    try {
       // Check if all required fields are provided
       if (!req.body.username || !req.body.email || !req.body.password) {
-         res.status(401).json({ 
+         res.status(400).json({ 
                success: false, 
                message: "Please enter all required fields"
          });
@@ -31,10 +31,10 @@ async function signup(req, res) {
       if (!errors.isEmpty()) {
          const error = errors.array()[0];
          if (error.param === 'email') {
-               return res.status(400).json({success: false, message: 'Please enter a valid email address'});
+               return res.status(404).json({success: false, message: 'Please enter a valid email address'});
          }
          if (error.param === 'password') {
-               return res.status(400).json({success: false, message: 'Password must be at least 8 characters long, must contain at least one lowercase letter, one uppercase letter, one number and one special character'});
+               return res.status(404).json({success: false, message: 'Password must be at least 8 characters long, must contain at least one lowercase letter, one uppercase letter, one number and one special character'});
          }
       }
     
@@ -71,7 +71,7 @@ async function login(req, res) {
    const errors = validationResult(req)
    try {
       if (!req.body.email || !req.body.password) {
-         res.status(401).json({ 
+         res.status(400).json({ 
             success: false, 
             message: "Please enter email and password"
          });
@@ -82,19 +82,19 @@ async function login(req, res) {
       if (!errors.isEmpty()) {
          const error = errors.array()[0];
          if (error.param === 'email') {
-            return res.status(400).json({success: false, message: 'Please enter a valid email address'});
+            return res.status(401).json({success: false, message: 'Please enter a valid email address'});
          }
       }
 
       const user = await getUserByEmail(email);
       if (!user) {
-         res.status(400).json({ success: false, message: "The email you entered does not exist"})
+         res.status(404).json({ success: false, message: "Invalid email address entered"})
          return;
       };
 
       const collectedPassword = await retrieveHashedPassword(email)
       if (await confirmRetrievedPassword(password, collectedPassword) !== true) {
-         res.status(400).json({ success: false, message: "You have entered an incorrect password"})
+         res.status(404).json({ success: false, message: "You have entered an incorrect password"})
          return;
       };
        
@@ -178,7 +178,17 @@ async function getAccount(req, res) {
 
 async function logout(req, res) {
    try {
-      
+      if (req.session) {
+         req.session.destroy(err => {
+            if (err) {
+               res.status(400).send('Unable to log out')
+            } else {
+               res.send('Logout successful')
+            }
+         })
+      } else {
+         res.end();
+      }
    } catch (error) {
       return res.status(500).json({
          success: false,
