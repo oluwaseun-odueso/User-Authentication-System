@@ -29,7 +29,7 @@ To install this application, you need Node.js 19( to download, go to: [https://n
 5. Star this repository
 6. Wait for the pull request to merge
 
-## contributors
+## Contributors
 
 - Oluwaseun Janet Odueso
 
