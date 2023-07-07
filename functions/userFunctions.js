@@ -6,13 +6,18 @@ const passwordValidator = require('password-validator')
 //Password schema
 const schema = new passwordValidator();
 schema
-.is().min(10)
+.is().min(8)
 .is().max(50)
 .has().uppercase()
 .has().lowercase()
 .has().digits()
 .has().not().spaces()
 .has().symbols()
+
+function validateEmail(email) {
+    const isEmailValid = emailValidator.validate(email)
+    return isEmailValid
+}
 
 async function createUser(userDetails) {
     try {
@@ -120,6 +125,7 @@ async function updateUserAccount(id, username, email) {
 
 const userFunctions = {
     schema,
+    validateEmail,
     createUser,
     checkEmail,
     checkUsername,

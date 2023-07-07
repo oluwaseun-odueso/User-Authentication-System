@@ -18,8 +18,9 @@ app.use(session(sess))
 app.use(express.json())
 app.use('/user', userRoutes)
 
+// Home page
 app.get('/', (req, res) => {
-    res.status(200).json({success: true, message: "Welcome to User Authentication System Home Page"})
+    res.status(200).json({success: true, message: "Welcome User Authentication System"})
 });
 
 app.listen(PORT, () => console.log(`app listening on port ${PORT}`));
