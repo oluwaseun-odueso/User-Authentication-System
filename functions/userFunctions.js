@@ -1,14 +1,25 @@
 const User = require('../model/user')
 const bcrypt = require('bcrypt');
+const emailValidator = require('email-validator')
+const passwordValidator = require('password-validator')
 
-async function createUser(username, email, password) {
+//Password schema
+const schema = new passwordValidator();
+schema
+.is().min(10)
+.is().max(50)
+.has().uppercase()
+.has().lowercase()
+.has().digits()
+.has().not().spaces()
+.has().symbols()
+
+async function createUser(userDetails) {
     try {
-        const emailCheck = await User.findOne({
-            where: { email }
-        })
-        return emailCheck ? true : false
+       const user = await User.create(userDetails)
+       return JSON.parse(JSON.stringify(user))
     } catch (error) {
-        return error
+        throw new Error(`Error creating user: ${error}`)
     }
 };
 
@@ -19,7 +30,7 @@ async function checkEmail (email) {
         })
         return emailCheck ? true : false
     } catch (error) {
-        throw new Error(`Error checking if user's email exists: ${error}`)
+        throw new Error(`Error checking if email exists: ${error}`)
     };
 };
 
@@ -31,41 +42,41 @@ async function checkUsername(username) {
         return usernameNumberCheck ? true : false
     }
     catch (error) {
-        return error
+        throw new Error(`Error checking if username exists: ${error}`)
     }
 };
 
 async function getUserById(id) {
     try {
-        const details = await User.findOne({
-            attributes: {exclude: ['password', 'image_key']},
+        const user = await User.findOne({
+            attributes: {exclude: ['hashed_password']},
             where: {id}
         });
-        return details
+        return JSON.parse(JSON.stringify(user))
     } catch (error) {
-        return error   
+        throw new Error(`Error getting user by id: ${error}`)
     }
 };
 
 async function getUserByEmail(email) {
     try {
-        const result = await User.findOne({
-            attributes: { exclude: ['password' ,'image_key']},
+        const user = await User.findOne({
+            attributes: { exclude: ['hashed_password']},
             where: { email }
           });
-        return result
+        return JSON.parse(JSON.stringify(user))
     } catch (error) {
-        return error
+        throw new Error(`Error getting user by email: ${error}`)
     }
 };
 
 async function retrieveHashedPassword(email) {
     try {
-        const buyerPassword = await User.findOne({
+        const userPassword = await User.findOne({
             attributes: ["hashed_password"],
             where: {email}
         });
-        return JSON.parse(JSON.stringify(buyerPassword)).hashed_password;
+        return JSON.parse(JSON.stringify(userPassword)).hashed_password;
     } catch (error) {
         throw new Error(`Error retrieving user's password: ${error}`)
     };
@@ -87,7 +98,7 @@ async function hashPassword (password) {
         const hash = await bcrypt.hash(password, saltRounds);
         return hash
     } catch (error) {
-        throw new Error(`Error hashing buyer's password: ${error}`);
+        throw new Error(`Error hashing user's password: ${error}`);
     };
 };
 
@@ -98,7 +109,7 @@ function checkIfEntriesMatch(firstValue, secondValue) {
 
 async function updateUserAccount(id, username, email) {
     try {
-        const updatedDetails = await Buyer.update({username, email}, {
+        const updatedDetails = await User.update({username, email}, {
             where: { id }
         });
         return updatedDetails
@@ -108,6 +119,7 @@ async function updateUserAccount(id, username, email) {
 };
 
 const userFunctions = {
+    schema,
     createUser,
     checkEmail,
     checkUsername,

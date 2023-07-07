@@ -1,35 +1,20 @@
 const express = require('express');
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express')
+const session = require('express-session');
 const userRoutes = require('./routes/user');
-const swaggerJSDoc = require('swagger-jsdoc');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
-
-const options = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'User Authentication System',
-            version: '1.0.0',
-            description: 'A simple express User Authentication System API'
-        },
-        server: [
-            {
-                url: 'http://localhost:3000'
-            }
-        ]
-    },
-    apis: ['./routes/*.js']
-}
-
-const specs = swaggerJsDoc(options);
-
 const app = express();
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
+const sess = {
+    name: 'SESSION_ID',
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 30 * 86400000, secure: true }
+};
 
+app.use(session(sess))
 app.use(express.json())
 app.use('/user', userRoutes)
 

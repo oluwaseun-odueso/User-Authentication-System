@@ -1,6 +1,7 @@
-const {validationResult} = require('express-validator')
-const {generateToken} = require('../authentication/userAuth')
+const emailValidator = require('email-validator')
+const {generateToken} = require('../authentication/userAuth');
 const {
+   schema,
    createUser,
    checkEmail,
    checkUsername,
@@ -11,11 +12,10 @@ const {
    confirmRetrievedPassword,
    checkIfEntriesMatch,
    updateUserAccount,
-} = require('../functions/userFunctions')
+} = require('../functions/userFunctions');
 
 
 async function signup(req, res) {
-   const errors = validationResult(req)
    try {
       // Check if all required fields are provided
       if (!req.body.username || !req.body.email || !req.body.password) {
@@ -26,18 +26,16 @@ async function signup(req, res) {
          return;
       };
       const {username, email, password} = req.body;
-      
       // Validate email and password
-      if (!errors.isEmpty()) {
-         const error = errors.array()[0];
-         if (error.param === 'email') {
-               return res.status(404).json({success: false, message: 'Please enter a valid email address'});
-         }
-         if (error.param === 'password') {
-               return res.status(404).json({success: false, message: 'Password must be at least 8 characters long, must contain at least one lowercase letter, one uppercase letter, one number and one special character'});
-         }
+      const validateEmail = emailValidator.validate(email)
+      const validatePassword = schema.validate(password)
+      if (!validateEmail) {
+         return res.status(400).json({success: false, message: 'Please enter a valid email address'})
       }
-    
+      if (!validatePassword) {
+         return res.status(400).json({success: false, message: "Password must be at least 10 characters containing lowercase(s), uppercase(s), digit(s), special character(s), and must not contain spaces"})
+      }
+      
       // Check if email is already registered
       if (await checkEmail(email)) { 
          res.status(400).json({ success: false, message: "Email is already registered"}) 
@@ -46,7 +44,7 @@ async function signup(req, res) {
 
       // Check if phone number is already registered
       if (await checkUsername(username)) {
-         res.status(400).json({ success: false, message: "Username is already taken"}) 
+         res.status(400).json({ success: false, message: "Please choose another username"}) 
          return;
       };
 
@@ -68,7 +66,6 @@ async function signup(req, res) {
 };
 
 async function login(req, res) {
-   const errors = validationResult(req)
    try {
       if (!req.body.email || !req.body.password) {
          res.status(400).json({ 
@@ -78,13 +75,6 @@ async function login(req, res) {
          return;
       };
       const {email, password} = req.body;
-
-      if (!errors.isEmpty()) {
-         const error = errors.array()[0];
-         if (error.param === 'email') {
-            return res.status(401).json({success: false, message: 'Please enter a valid email address'});
-         }
-      }
 
       const user = await getUserByEmail(email);
       if (!user) {
@@ -97,7 +87,7 @@ async function login(req, res) {
          res.status(404).json({ success: false, message: "You have entered an incorrect password"})
          return;
       };
-       
+      
       const token = await generateToken(user);
        res.status(200).json({
            success: true,
@@ -155,7 +145,7 @@ async function updateAccount(req, res) {
 
 async function getAccount(req, res) {
    try {
-         const user = await getUserById(req.buyer.id);
+         const user = await getUserById(req.user.id);
          if (!user) {
             res.status(400).json({
                   success: false,
@@ -176,14 +166,14 @@ async function getAccount(req, res) {
    };
 };
 
-async function logout(req, res) {
+async function logout(req, res, next) {
    try {
       if (req.session) {
          req.session.destroy(err => {
             if (err) {
-               res.status(400).send('Unable to log out')
+               res.status(400).json({success: false, message: 'Unable to log out'})
             } else {
-               res.send('Logout successful')
+               res.redirect('/')
             }
          })
       } else {
@@ -192,7 +182,7 @@ async function logout(req, res) {
    } catch (error) {
       return res.status(500).json({
          success: false,
-         message: "Error getting user's account details",
+         message: "Error logging user out",
          error: error.message
       });
    }

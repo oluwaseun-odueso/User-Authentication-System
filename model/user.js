@@ -22,3 +22,5 @@ User.init({
     sequelize, // We need to pass the connection instance
     modelName: 'User' 
   });
+
+module.exports = User;
