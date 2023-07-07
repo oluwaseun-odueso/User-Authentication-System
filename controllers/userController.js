@@ -130,6 +130,12 @@ async function updateAccount(req, res) {
          });
       };
 
+      // Validate new email
+      const isEmailValid = validateEmail(email)
+      if (!isEmailValid) {
+         return res.status(400).json({success: false, message: 'Please enter a valid email address'})
+      }
+
       // Update user profile and return user's new details
       await updateUserAccount(req.user.id, username, email)
       const newDetails = await getUserById(req.user.id)
