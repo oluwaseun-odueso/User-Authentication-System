@@ -16,7 +16,11 @@ To install this application, you need Node.js 19( to download, go to: [https://n
 
 1. Clone this project (`git clone https://github.com/oluwaseun-odueso/User-Authentication-System`)
 2. Run npm install to download all dependencies
+<<<<<<< HEAD
 3. Set up a Sequelize database with MySQL flavour, a payload secret, session secret and a port number
+=======
+3. Set up a Sequelize database with MySQL flavour, a payload secret, a session secret and a port number
+>>>>>>> 7f786080c828a64e0ac0293c19b21830727ff2b4
 4. Store all credentials in a .env file 
 5. Run npm start
 
