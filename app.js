@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const userRoutes = require('./routes/user');
 require('dotenv').config();
 
@@ -7,13 +8,13 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 const sess = {
-    name: 'SESSION_ID',
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: { maxAge: 30 * 86400000, secure: true }
 };
 
+app.use(cookieParser())
 app.use(session(sess))
 app.use(express.json())
 app.use('/user', userRoutes)

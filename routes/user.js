@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {verifyToken} = require('../authentication/userAuth')
+const limiter = require('../middlewares/methodAndRateLimit')
 require('dotenv').config()
 const {
     signup,
@@ -10,7 +11,8 @@ const {
     logout
 } = require('../controllers/userController');
 
-router.post('/register', signup)
+// The limiter middleware reduces the number of times an IP address can call the register route
+router.post('/register', limiter, signup)
 
 router.post('/login', login);
 

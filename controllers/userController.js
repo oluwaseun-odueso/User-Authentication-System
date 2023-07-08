@@ -1,4 +1,3 @@
-// const emailValidator = require('email-validator')
 const {generateToken} = require('../authentication/userAuth');
 const {
    schema,
@@ -14,7 +13,6 @@ const {
    checkIfEntriesMatch,
    updateUserAccount,
 } = require('../functions/userFunctions');
-
 
 async function signup(req, res) {
    try {
@@ -93,7 +91,10 @@ async function login(req, res) {
          return res.status(404).json({ success: false, message: "You have entered an incorrect password"})
       };
       
+      
       // Generate token upon successful login
+      req.session.user = user
+      req.session.save();
       const token = await generateToken(user);
        res.status(200).json({
            success: true,
@@ -168,7 +169,7 @@ async function getAccount(req, res) {
          success: true,
          user
       });
-   } catch (error) {
+   } catch (error){
          return res.status(500).json({
             success: false,
             message: "Error getting user's account details",
